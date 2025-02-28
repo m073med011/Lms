@@ -30,7 +30,6 @@ export default function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         {/* store pages */}
-        <Route path="/store" element={<Store/>} />
 
         {/* Protected Routes inside AppLayout */}
         <Route element={<ProtectedRoute />}>
@@ -41,6 +40,7 @@ export default function App() {
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
+            <Route path="/store" element={<Store />} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />

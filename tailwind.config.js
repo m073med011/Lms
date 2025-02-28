@@ -185,5 +185,19 @@ export default {
       },
     },
   },
-  plugins: [require("@tailwindcss/forms"), require("autoprefixer")],
+  plugins: [
+    require("@tailwindcss/forms"), 
+    require("autoprefixer"), 
+    function ({ addUtilities }) {
+        addUtilities({
+            '.scrollbar-hide': {
+                '&::-webkit-scrollbar': {
+                    display: 'none',
+                },
+                '-ms-overflow-style': 'none', 
+                'scrollbar-width': 'none', 
+            },
+        });
+    },
+],
 };

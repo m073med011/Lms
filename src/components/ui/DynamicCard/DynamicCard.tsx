@@ -10,6 +10,8 @@ interface DynamicCardProps {
     buttonText?: string;
     onButtonClick?: () => void;
     className?: string;
+    level?: string; // New level property
+    category?: string; // New category property
 }
 
 const DynamicCard: React.FC<DynamicCardProps> = ({
@@ -21,6 +23,8 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
     buttonText = 'Add to Cart',
     onButtonClick,
     className = '',
+    level = 'Beginner', // Default level
+    category = 'Uncategorized', // Default category
 }) => {
     // Generate rating stars
     const renderRatingStars = () => {
@@ -76,9 +80,13 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
     return (
         <div className={`w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 ${className}`}>
             {/* Image */}
-            <a href="#">
-                <img className="p-8 rounded-t-lg" src={imageUrl} alt={title} />
-            </a>
+            <div>
+                <img
+                    className="p-2 rounded-2xl max-h-64"
+                    src={imageUrl || "default-image-url.jpg"}
+                    alt={title || "Default Image"}
+                />
+            </div>
 
             {/* Content */}
             <div className="px-5 pb-5">
@@ -95,7 +103,23 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
                         {description}
                     </p>
                 )}
+<div className="flex gap-3">
+                
 
+                {/* Level */}
+                {level && (
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        <strong>Level:</strong> {level}
+                    </p>
+                )}
+
+                {/* Category */}
+                {category && (
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        <strong>Category:</strong> {category}
+                    </p>
+                )}
+</div>
                 {/* Rating */}
                 <div className="flex items-center mt-2.5 mb-5">
                     <div className="flex items-center space-x-1 rtl:space-x-reverse">
