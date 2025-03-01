@@ -24,22 +24,36 @@ export interface User {
 }
 
 // Define the Course interface
+interface CourseMaterial {
+    name: string;
+    type: string; // e.g., "video", "pdf", "quiz"
+    url: string;
+}
 export interface Course {
-    _id: string;
+    _id: { $oid: string };
     title: string;
-    slug: string;
-    thumbnail?: string; // Optional thumbnail URL
+    thumbnail: string;
     description: string;
-    instructor?: User; // Optional instructor (populated user object)
-    enrolledStudents: User[]; // Array of User objects
+    instructor: { $oid: string };
+    enrolledStudents: Array<{ $oid: string }>;
     category: string;
-    duration: number; // Duration in hours
-    level: CourseLevel; // Use the enum here
+    duration: number;
+    level: string;
     price: number;
     isPublished: boolean;
-    materials?: Material[]; // Optional array of materials
-    createdAt?: string; // Optional timestamp
-    updatedAt?: string; // Optional timestamp
+    materials: CourseMaterial[]; // Use `unknown[]` or define a specific type
+    purchases: Array<{
+        student: { $oid: string };
+        purchaseDate: { $date: string };
+        amount: number;
+        _id: { $oid: string };
+        createdAt: { $date: string };
+        updatedAt: { $date: string };
+    }>;
+    createdAt: { $date: string };
+    updatedAt: { $date: string };
+    slug: string;
+    __v: number;
 }
 
 // Define the Material interface

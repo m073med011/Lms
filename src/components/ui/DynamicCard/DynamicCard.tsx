@@ -1,21 +1,23 @@
 import React from 'react';
 
-// Define the props interface with all optional fields
 interface DynamicCardProps {
+    id?: string; // Add id prop
     imageUrl?: string;
     title?: string;
     description?: string;
     rating?: number;
     price?: number;
     buttonText?: string;
-    onButtonClick?: () => void;
+    onButtonClick?: (id?: string) => void; // Update to accept id
     className?: string;
-    level?: string; // New level property
-    category?: string; // New category property
+    level?: string;
+    category?: string;
+    isButtonDisabled?: boolean;
 }
 
 const DynamicCard: React.FC<DynamicCardProps> = ({
-    imageUrl = 'https://placehold.co/400', // Default image
+    id, // Add id prop
+    imageUrl = 'https://placehold.co/400',
     title = 'Product Title',
     description = 'Product Description',
     rating = 0,
@@ -23,8 +25,9 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
     buttonText = 'Add to Cart',
     onButtonClick,
     className = '',
-    level = 'Beginner', // Default level
-    category = 'Uncategorized', // Default category
+    level = 'Beginner',
+    category = 'Uncategorized',
+    isButtonDisabled = false,
 }) => {
     // Generate rating stars
     const renderRatingStars = () => {
@@ -80,11 +83,11 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
     return (
         <div className={`w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 ${className}`}>
             {/* Image */}
-            <div>
+            <div className=''>
                 <img
-                    className="p-2 rounded-2xl max-h-64"
-                    src={imageUrl || "default-image-url.jpg"}
-                    alt={title || "Default Image"}
+                    className="p-2 rounded-2xl max-h-48 w-full  object-fill"
+                    src={imageUrl}
+                    alt={title}
                 />
             </div>
 
@@ -103,23 +106,21 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
                         {description}
                     </p>
                 )}
-<div className="flex gap-3">
-                
 
-                {/* Level */}
-                {level && (
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        <strong>Level:</strong> {level}
-                    </p>
-                )}
+                {/* Level and Category */}
+                <div className="flex gap-3 mt-2">
+                    {level && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            <strong>Level:</strong> {level}
+                        </p>
+                    )}
+                    {category && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            <strong>Category:</strong> {category}
+                        </p>
+                    )}
+                </div>
 
-                {/* Category */}
-                {category && (
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        <strong>Category:</strong> {category}
-                    </p>
-                )}
-</div>
                 {/* Rating */}
                 <div className="flex items-center mt-2.5 mb-5">
                     <div className="flex items-center space-x-1 rtl:space-x-reverse">
@@ -136,8 +137,11 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
                         ${price.toFixed(2)}
                     </span>
                     <button
-                        onClick={onButtonClick}
-                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={() => onButtonClick?.(id)} // Pass id to the handler
+                        disabled={isButtonDisabled}
+                        className={`text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ${
+                            isButtonDisabled ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
                     >
                         {buttonText}
                     </button>

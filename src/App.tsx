@@ -20,6 +20,8 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import Protected Route
 import Store from "./pages/store/pages/Store";
+import Mycourses from "./pages/myCourses/MyCourses";
+import Course from "./pages/myCourses/MySingleCourse"; // Import the Course component
 
 export default function App() {
   return (
@@ -41,6 +43,8 @@ export default function App() {
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
             <Route path="/store" element={<Store />} />
+            <Route path="/my-courses" element={<Mycourses/>} />
+            <Route path="/course/:courseId" element={<Course/>} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />

@@ -6,5 +6,8 @@ export const API_ENDPOINTS = {
   USER_PROFILE: `${API_BASE_URL}/auth/me`,
   COURSES: `${API_BASE_URL}/courses`,
   CREATECOURSES: `${API_BASE_URL}/courses/create`,
-  GetOneCourse: (id: string | number) => `${API_BASE_URL}/courses/${id}`,
+  BUYCOURSE: (courseId: string | number, userId: string | number) => 
+    `${API_BASE_URL}/courses/${courseId}/buy/${userId}`,
+    GetOneCourse: (id: string | number) => `${API_BASE_URL}/courses/${id}`,
+    STUDENT_COURSES:(userId:string|number)=> `${API_BASE_URL}/courses/${userId}/my-courses`,
 };

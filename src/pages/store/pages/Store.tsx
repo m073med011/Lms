@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useCourses, useCreateCourse } from '../../../hooks/useCourses';
+import { useCourses, useCreateCourse, useBuyCourse } from '../../../hooks/useCourses';
 import CreateCourseModal from '../Components/CreateCourseModal';
 import SidebarFilters from '../Components/SidebarFilters';
 import DaynamicCard from '../../../components/ui/DynamicCard/DynamicCard';
 import { Filters } from '../types/type';
 import Button from '../../../components/ui/button/Button';
+import PageMeta from "../../../components/common/PageMeta";
 
 const Store: React.FC = () => {
     const [filters, setFilters] = useState<Filters>({
@@ -18,6 +19,7 @@ const Store: React.FC = () => {
 
     const { courses, totalPages, loading, error } = useCourses(filters, page);
     const { create, isLoading: isCreating, error: createError } = useCreateCourse();
+    const { buy, isLoading: isBuying } = useBuyCourse();
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -30,8 +32,20 @@ const Store: React.FC = () => {
         setPage(1);
     };
 
+    const handleBuyCourse = async (courseId: string) => {
+        try {
+            await buy(courseId);
+        } catch {
+            alert('Failed to buy course. Please try again.');
+        }
+    };
+
     return (
         <div className="store-page p-4">
+            <PageMeta
+        title="Store | Academix"
+        description="This is React.js Form Elements  Dashboard page for Academix - React.js Tailwind CSS Admin Dashboard Template"
+      />
             <h1 className="text-3xl mb-4 text-gray-800 dark:text-gray-100">Course Store</h1>
 
             {/* Search Bar and Buttons */}
@@ -44,8 +58,8 @@ const Store: React.FC = () => {
                     className="px-4 max-w-80 py-2 border rounded-lg w-full dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                 />
                 <div className="flex gap-5">
-                <Button children={"Filters"} onClick={() => setIsSidebarOpen(true)} />
-                <Button children={"Create Course"} onClick={() => setIsModalOpen(true)} />
+                    <Button onClick={() => setIsSidebarOpen(true)}>Filters</Button>
+                    <Button onClick={() => setIsModalOpen(true)}>Create Course</Button>
                 </div>
             </div>
 
@@ -66,6 +80,8 @@ const Store: React.FC = () => {
                             title={course.title} 
                             description={course.description} 
                             category={course.category}
+                            onButtonClick={() => handleBuyCourse(course._id)}
+                            isButtonDisabled={isBuying}
                         />
                     ))
                 ) : (
