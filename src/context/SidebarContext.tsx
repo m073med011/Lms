@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { useDirection } from "./DirectionContext"; // Import Direction Context
 
 type SidebarContextType = {
   isExpanded: boolean;
@@ -26,6 +27,7 @@ export const useSidebar = () => {
 export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { direction } = useDirection(); // Get direction
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -77,7 +79,8 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
         toggleSubmenu,
       }}
     >
-      {children}
+      {/* Apply RTL dynamically */}
+      <div dir={direction}>{children}</div>
     </SidebarContext.Provider>
   );
 };

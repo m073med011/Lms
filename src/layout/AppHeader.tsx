@@ -5,8 +5,19 @@ import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import NotificationDropdown from "../components/header/NotificationDropdown";
 import UserDropdown from "../components/header/UserDropdown";
+import { useTranslation } from "react-i18next";
+import { useDirection } from "../context/DirectionContext";
+
 
 const AppHeader: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const { direction } = useDirection(); // Get direction
+
+   // Function to change language
+   const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+  };
+
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
@@ -41,7 +52,10 @@ const AppHeader: React.FC = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
+    
+    <header 
+    dir={direction}
+    className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
       <div className="flex flex-col items-center justify-between flex-grow lg:flex-row lg:px-6">
         <div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4">
           <button
@@ -49,6 +63,7 @@ const AppHeader: React.FC = () => {
             onClick={handleToggle}
             aria-label="Toggle Sidebar"
           >
+            
             {isMobileOpen ? (
               <svg
                 width="24"
@@ -83,6 +98,8 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
+          
+
           <Link to="/" className="lg:hidden">
             <img
               className="dark:hidden"
@@ -95,6 +112,8 @@ const AppHeader: React.FC = () => {
               alt="Logo"
             />
           </Link>
+
+          
 
           <button
             onClick={toggleApplicationMenu}
@@ -115,6 +134,7 @@ const AppHeader: React.FC = () => {
               />
             </svg>
           </button>
+          
 
           <div className="hidden lg:block">
             <form>
@@ -139,7 +159,7 @@ const AppHeader: React.FC = () => {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Search or type command..."
+                  placeholder={t("Search or type command...")}
                   className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
                 />
 
@@ -162,9 +182,21 @@ const AppHeader: React.FC = () => {
             {/* <!-- Dark Mode Toggler --> */}
             <NotificationDropdown />
             {/* <!-- Notification Menu Area --> */}
+              {/* Language Switcher Dropdown */}
+        <div className="relative">
+          <select
+            onChange={(e) => changeLanguage(e.target.value)}
+            value={i18n.language}
+            className="px-4 py-2 bg-gray-200 dark:text-white dark:bg-gray-800 rounded-md cursor-pointer"
+          >
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
           </div>
           {/* <!-- User Area --> */}
           <UserDropdown />
+          
         </div>
       </div>
     </header>
