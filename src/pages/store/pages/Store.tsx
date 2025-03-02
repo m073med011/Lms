@@ -80,7 +80,7 @@ const Store: React.FC = () => {
                             title={course.title} 
                             description={course.description} 
                             category={course.category}
-                            onButtonClick={() => handleBuyCourse(course._id)}
+                            onButtonClick={() => handleBuyCourse(course._id.$oid)}
                             isButtonDisabled={isBuying}
                         />
                     ))

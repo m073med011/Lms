@@ -16,7 +16,7 @@ interface DynamicCardProps {
 }
 
 const DynamicCard: React.FC<DynamicCardProps> = ({
-    id, // Add id prop
+    id='', // Add id prop
     imageUrl = 'https://placehold.co/400',
     title = 'Product Title',
     description = 'Product Description',

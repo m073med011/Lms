@@ -25,6 +25,7 @@ export interface User {
 
 // Define the Course interface
 interface CourseMaterial {
+    title: string;
     name: string;
     type: string; // e.g., "video", "pdf", "quiz"
     url: string;
@@ -32,6 +33,8 @@ interface CourseMaterial {
 export interface Course {
     _id: { $oid: string };
     title: string;
+    rating: number;
+    id: string|number;
     thumbnail: string;
     description: string;
     instructor: { $oid: string };

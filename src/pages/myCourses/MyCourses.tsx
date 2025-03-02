@@ -33,7 +33,7 @@ const Mycourses: React.FC = () => {
                     courses.map((course: Course, index: number) => (
                         <DaynamicCard 
                             key={index}
-                            id={course._id} // Pass the course id
+                            id={course._id.$oid} // Pass the course id
                             buttonText="View Course" 
                             price={course.price} 
                             imageUrl={course.thumbnail} 
