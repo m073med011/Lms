@@ -1,3 +1,10 @@
 {
-    "Search or type command...": "البحث أو كتابة الأمر..."
-}
+    "Search or type command...": "البحث أو كتابة الأمر...",
+   "dashboard": "لوحة التحكم",
+    "myCourses": "دوراتي",
+    "calendar": "التقويم",
+    "myOrganization": "مؤسستي",
+    "store": "المتجر",
+    "userProfile": "الملف الشخصي"
+  }
+  

@@ -1,6 +1,12 @@
 {
     "welcome": "Welcome to our app!",
     "language": "Language",
-    "changeLanguage": "Change Language"
+    "changeLanguage": "Change Language",
+    "dashboard": "Dashboard",
+    "myCourses": "My Courses",
+    "calendar": "Calendar",
+    "myOrganization": "My Organization",
+    "store": "Store",
+    "userProfile": "User Profile"
   }
   

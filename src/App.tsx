@@ -22,6 +22,7 @@ import ProtectedRoute from "./components/ProtectedRoute"; // Import Protected Ro
 import Store from "./pages/store/pages/Store";
 import Mycourses from "./pages/myCourses/MyCourses";
 import Course from "./pages/myCourses/MySingleCourse"; // Import the Course component
+import OrganizationsList from "./pages/Organizations/MyOrganization";
 
 export default function App() {
   return (
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/store" element={<Store />} />
             <Route path="/my-courses" element={<Mycourses/>} />
             <Route path="/course/:courseId" element={<Course/>} />
+            <Route path="/my-orgnization" element={<OrganizationsList/>} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />

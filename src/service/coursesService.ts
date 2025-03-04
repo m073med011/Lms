@@ -32,8 +32,7 @@ export const buyCourse = async (courseId: string, userId: string) => {
         const response = await axios.post(API_ENDPOINTS.BUYCOURSE(courseId, userId));
         return response.data;
     } catch {
-        alert("Error buying course:");
-        // throw new Error("Failed to buy course.asd Please try again.");
+        throw new Error("Failed to buy course.asd Please try again.");
     }
 };
 

@@ -9,7 +9,7 @@ import {
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import SidebarWidget from "./SidebarWidget";
+// import SidebarWidget from "./SidebarWidget";
 import { LayoutDashboard, SquareLibrary, CalendarRange, Landmark, Store } from 'lucide-react';
 
 
@@ -20,44 +20,45 @@ type NavItem = {
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
 };
 
-const navItems: NavItem[] = [
-  {
-    icon: <LayoutDashboard />,
-    name: "Dashboard",
-    path: "/",
-  },
-  {
-    icon: <SquareLibrary />,
-    name: "My courses",
-    path: "/my-courses",
-  },
-  {
-    icon: <CalendarRange />,
-    name: "Calendar",
-    path: "/calendar",
-  },
-  {
-    icon: <Landmark />,
-    name: "my Orgnization",
-    path: "/my-orgnization",
-  },
-  {
-    icon: <Store />,
-    name: "Store",
-    path: "/store",
-    // subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "User Profile",
-    path: "/profile",
-  },
-];
+
 
 
 const AppSidebar: React.FC = () => {
 
-  const { i18n } = useTranslation();
+  const { t,i18n } = useTranslation();
+  const navItems: NavItem[] = [
+    {
+      icon: <LayoutDashboard />,
+      name: t("dashboard"),
+      path: "/",
+    },
+    {
+      icon: <SquareLibrary />,
+      name: ("myCourses"),
+      path: "/my-courses",
+    },
+    {
+      icon: <CalendarRange />,
+      name: t("calendar"),
+      path: "/calendar",
+    },
+    {
+      icon: <Landmark />,
+      name: t("myOrganization"),
+      path: "/my-orgnization",
+    },
+    {
+      icon: <Store />,
+      name: t("store"),
+      path: "/store",
+      // subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+    },
+    {
+      icon: <UserCircleIcon />,
+      name: t("userProfile"),
+      path: "/profile",
+    },
+  ];
 
 
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
@@ -182,7 +183,7 @@ const AppSidebar: React.FC = () => {
                   {nav.icon}
                 </span>
                 {(isExpanded || isHovered || isMobileOpen) && (
-                  <span className="menu-item-text">{nav.name}</span>
+                  <span className="menu-item-text">{t(nav.name)}</span>
                 )}
               </Link>
             )
@@ -310,24 +311,24 @@ const AppSidebar: React.FC = () => {
               </h2>
               {renderMenuItems(navItems, "main")}
             </div>
-            <div className="">
+            {/* <div className="">
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
                   ? "lg:justify-center"
                   : "justify-start"
                   }`}
               >
-                {isExpanded || isHovered || isMobileOpen ? (
+                {/* {isExpanded || isHovered || isMobileOpen ? (
                   "Others"
                 ) : (
                   <HorizontaLDots />
-                )}
-              </h2>
+                )} */}
+              {/* </h2> */}
               {/* {renderMenuItems(othersItems, "others")} */}
-            </div>
+            {/* </div> */}
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
+        {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
       </div>
     </aside>
   );
