@@ -18,6 +18,7 @@ const Store: React.FC = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
     const { courses, totalPages, loading, error } = useCourses(filters, page);
+    
     const { create, isLoading: isCreating, error: createError } = useCreateCourse();
     const { buy, isLoading: isBuying } = useBuyCourse();
 
@@ -48,20 +49,25 @@ const Store: React.FC = () => {
       />
             <h1 className="text-3xl mb-4 text-gray-800 dark:text-gray-100">Course Store</h1>
 
-            {/* Search Bar and Buttons */}
-            <div className="mb-4 flex justify-between gap-4">
-                <input 
-                    type="text" 
-                    placeholder="Search Courses" 
-                    value={filters.search}
-                    onChange={handleSearchChange}
-                    className="px-4 max-w-80 py-2 border rounded-lg w-full dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-                />
-                <div className="flex gap-5">
-                    <Button onClick={() => setIsSidebarOpen(true)}>Filters</Button>
-                    <Button onClick={() => setIsModalOpen(true)}>Create Course</Button>
-                </div>
-            </div>
+            <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full">
+    <input 
+        type="text" 
+        placeholder="Search Courses" 
+        value={filters.search}
+        onChange={handleSearchChange}
+        className="px-4 py-2 border rounded-lg w-full sm:max-w-80 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+    />
+
+    <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 sm:gap-5">
+        <Button onClick={() => setIsSidebarOpen(true)} className="w-full sm:w-auto">
+            Filters
+        </Button>
+        <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
+            Create Course
+        </Button>
+    </div>
+</div>
+
 
             {/* Course List */}
             <div className="course-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -80,7 +86,7 @@ const Store: React.FC = () => {
                             title={course.title} 
                             description={course.description} 
                             category={course.category}
-                            onButtonClick={() => handleBuyCourse(course._id.$oid)}
+                            onButtonClick={() => handleBuyCourse(String(course._id))}
                             isButtonDisabled={isBuying}
                         />
                     ))

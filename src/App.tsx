@@ -21,7 +21,7 @@ import Home from "./pages/Dashboard/Home";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import Protected Route
 import Store from "./pages/store/pages/Store";
 import Mycourses from "./pages/myCourses/MyCourses";
-import Course from "./pages/myCourses/MySingleCourse"; // Import the Course component
+import CourseDetails from "./pages/myCourses/MySingleCourse"; // Import the Course component
 import OrganizationsList from "./pages/Organizations/MyOrganization";
 
 export default function App() {
@@ -45,7 +45,7 @@ export default function App() {
             <Route path="/blank" element={<Blank />} />
             <Route path="/store" element={<Store />} />
             <Route path="/my-courses" element={<Mycourses/>} />
-            <Route path="/course/:courseId" element={<Course/>} />
+            <Route path="/course/:courseId" element={<CourseDetails/>} />
             <Route path="/my-orgnization" element={<OrganizationsList/>} />
 
             {/* Forms */}

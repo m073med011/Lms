@@ -1,6 +1,71 @@
 import { useEffect, useState } from 'react';
-import { fetchCourses, createCourse,buyCourse,getStudentCourses,getCourseById } from '../service/coursesService';
+import { fetchCourses, createCourse,buyCourse,getStudentCourses,getCourseById,addMaterial, updateMaterial, deleteMaterial } from '../service/coursesService';
 import { Course, Filters } from '../pages/store/types/type';
+export const useAddMaterial = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const add = async (courseId: string, materialData: FormData) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await addMaterial(courseId, materialData);
+            return response; // Return response for further use if needed
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to add material.';
+            setError(errorMessage);
+            throw err; // Re-throw to handle in component
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return { add, isLoading, error };
+};
+
+export const useUpdateMaterial = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const update = async (courseId: string, materialId: string, materialData: FormData) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await updateMaterial(courseId, materialId, materialData);
+            return response;
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to update material.';
+            setError(errorMessage);
+            throw err;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return { update, isLoading, error };
+};
+
+export const useDeleteMaterial = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const remove = async (courseId: string, materialId: string) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await deleteMaterial(courseId, materialId);
+            return response;
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to delete material.';
+            setError(errorMessage);
+            throw err;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return { remove, isLoading, error };
+};
 
 export const useCourses = (filters: Filters, page: number) => {
     const [courses, setCourses] = useState<Course[]>([]);
@@ -45,8 +110,6 @@ export const useCreateCourse = () => {
 
     return { create, isLoading, error };
 };
-
-
 export const useBuyCourse = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -56,7 +119,6 @@ export const useBuyCourse = () => {
     const userId = user?.id;
 
     const buy = async (courseId: string) => {
-        // Check if the user is authenticated
         if (!userId) {
             setError("User not authenticated. Please log in.");
             alert("User not authenticated. Please log in.");
@@ -67,21 +129,21 @@ export const useBuyCourse = () => {
         setError(null); // Reset error before making a new request
 
         try {
-            // Call the buyCourse function
-            await buyCourse(courseId, userId);
-            alert("Course purchased successfully!"); // Notify the user of success
+            // Call the API function
+            const response = await buyCourse(courseId, userId);
+            alert(response.message); // Show success message
         } catch (err) {
-            // Handle errors
-            const errorMessage = err instanceof Error ? err.message : "Failed to buy course.";
+            const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred.";
             setError(errorMessage);
-            alert(errorMessage); // Notify the user of the error
+            alert(errorMessage); // Show the exact API error message
         } finally {
-            setIsLoading(false); // Reset loading state
+            setIsLoading(false);
         }
     };
 
     return { buy, isLoading, error };
 };
+
 
 export const useGetCouseById = (courseId: string) => {
     const [course, setCourse] = useState<Course | null>(null);
