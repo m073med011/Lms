@@ -1,6 +1,6 @@
 // Define an enum for course levels
 export enum CourseLevel {
-    ''='',
+    None = '',
     Beginner = "beginner",
     Intermediate = "intermediate",
     Advanced = "advanced",

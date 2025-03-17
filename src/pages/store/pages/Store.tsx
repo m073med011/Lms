@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { useCourses, useCreateCourse } from '../../../hooks/useCourses';
 import CreateCourseModal from '../Components/CreateCourseModal';
 import SidebarFilters from '../Components/SidebarFilters';
-import DaynamicCard from '../../../components/ui/DynamicCard/DynamicCard';
-import { Filters } from '../types/type';
+import DynamicCard from '../../../components/ui/DynamicCard/DynamicCard'; // Fixed typo
+import { Filters, CourseLevel } from '../types/type';
 import Button from '../../../components/ui/button/Button';
 import PageMeta from "../../../components/common/PageMeta";
 
 const Store: React.FC = () => {
     const [filters, setFilters] = useState<Filters>({
         category: '',
-        level: '',
+        level: CourseLevel.None, // Now valid as CourseLevel.None
         search: '',
     });
     const [page, setPage] = useState<number>(1);
@@ -64,15 +64,15 @@ const Store: React.FC = () => {
                     <p className="text-red-500">{error}</p>
                 ) : courses.length > 0 ? (
                     courses.map((course, index) => (
-                        <DaynamicCard 
+                        <DynamicCard // Fixed typo
                             key={index}
                             price={course.price} 
                             imageUrl={course.thumbnail} 
-                            rating={3} 
+                            rating={course.rating} // Fixed hardcoded value
                             title={course.title} 
                             description={course.description} 
                             category={course.category}
-                            link={`/course/${course._id}`} // Add link to course details
+                            link={`/course/${course._id}`}
                         />
                     ))
                 ) : (

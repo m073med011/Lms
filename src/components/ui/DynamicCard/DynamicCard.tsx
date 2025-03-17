@@ -1,6 +1,9 @@
 import React from 'react';
 
 interface DynamicCardProps {
+    onButtonClick?: () => void; // Optional callback for button click
+    buttonText?: string; // Optional text for the button
+    isButtonDisabled?: boolean; // Add this to match MyCourses usage
     id?: string;
     imageUrl?: string;
     title?: string;
@@ -11,7 +14,7 @@ interface DynamicCardProps {
     level?: string;
     category?: string;
     link?: string;
-    onClick?: () => void; // Added for interactivity
+    onClick?: () => void; // For card interactivity
 }
 
 const DynamicCard: React.FC<DynamicCardProps> = ({
@@ -25,20 +28,23 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
     category = 'Uncategorized',
     link = '#',
     onClick,
+    buttonText, // Include buttonText
+    onButtonClick, // Include onButtonClick
+    isButtonDisabled = false, // Default to false
 }) => {
     const renderRatingStars = () => {
         const stars = [];
         const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5; // More precise half-star threshold
+        const hasHalfStar = rating % 1 >= 0.5;
 
         for (let i = 0; i < 5; i++) {
             const StarIcon = (
                 <svg
                     className={`w-4 h-4 ${
-                        i < fullStars 
-                            ? 'text-yellow-300' 
-                            : hasHalfStar && i === fullStars 
-                            ? 'text-yellow-300' 
+                        i < fullStars
+                            ? 'text-yellow-300'
+                            : hasHalfStar && i === fullStars
+                            ? 'text-yellow-300'
                             : 'text-gray-200 dark:text-gray-600'
                     }`}
                     aria-hidden="true"
@@ -83,7 +89,7 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
                     className="p-2 rounded-2xl max-h-48 w-full object-cover hover:scale-105 transition-transform duration-300"
                     src={imageUrl}
                     alt={title}
-                    loading="lazy" // Added for performance
+                    loading="lazy"
                 />
             </div>
 
@@ -112,9 +118,7 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
                 </div>
 
                 <div className="flex items-center mt-2.5 mb-5">
-                    <div className="flex items-center space-x-1">
-                        {renderRatingStars()}
-                    </div>
+                    <div className="flex items-center space-x-1">{renderRatingStars()}</div>
                     <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm dark:bg-blue-200 dark:text-blue-800 ms-3">
                         {rating.toFixed(1)}
                     </span>
@@ -124,6 +128,17 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
                     <span className="text-3xl font-bold text-gray-900 dark:text-white">
                         ${price.toFixed(2)}
                     </span>
+                    {buttonText && onButtonClick && (
+                        <button
+                            onClick={onButtonClick}
+                            disabled={isButtonDisabled}
+                            className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${
+                                isButtonDisabled ? 'bg-gray-400 cursor-not-allowed' : ''
+                            }`}
+                        >
+                            {buttonText}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

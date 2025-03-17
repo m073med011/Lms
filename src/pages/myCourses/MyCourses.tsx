@@ -1,71 +1,68 @@
 import React, { useState } from "react";
-import { useStudentCourses, useAddMaterial, useDeleteMaterial } from "../../hooks/useCourses";
-import DaynamicCard from "../../components/ui/DynamicCard/DynamicCard";
-import { Course, Material } from "../store/types/type";
+import { useStudentCourses } from "../../hooks/useCourses";
+import DynamicCard from "../../components/ui/DynamicCard/DynamicCard"; // Fixed typo
+import { Course, CourseMaterial } from "../store/types/type";
 import { useNavigate } from "react-router-dom";
 import PageMeta from "../../components/common/PageMeta";
 
 const MyCourses: React.FC = () => {
     const { courses, loading, error } = useStudentCourses();
-    const { add: addMaterial, isLoading: addLoading, error: addError } = useAddMaterial();
-    const { remove: deleteMaterial, isLoading: deleteLoading, error: deleteError } = useDeleteMaterial();
     const navigate = useNavigate();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [materialForm, setMaterialForm] = useState<{ courseId: string; title: string; type: string; file?: File }>({
-        courseId: "",
-        title: "",
-        type: "document",
-    });
+    // const [materialForm, setMaterialForm] = useState<{ courseId: string; title: string; type: string; file?: File }>({
+    //     courseId: "",
+    //     title: "",
+    //     type: "pdf", // Aligned with MaterialType
+    // });
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const isInstructor = user?.role === "instructor"; // Adjust based on your user object structure
+    const isInstructor = user?.role === "instructor";
 
     const handleViewCourse = (courseId?: string) => {
         if (courseId) navigate(`/course/${courseId}`);
     };
 
-    const handleAddMaterial = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!materialForm.file || !materialForm.courseId) {
-            alert("Please select a course and upload a file.");
-            return;
-        }
+    // const handleAddMaterial = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!materialForm.file || !materialForm.courseId) {
+    //         alert("Please select a course and upload a file.");
+    //         return;
+    //     }
 
-        const formData = new FormData();
-        formData.append("title", materialForm.title);
-        formData.append("type", materialForm.type);
-        formData.append("content", materialForm.file);
+    //     const formData = new FormData();
+    //     formData.append("title", materialForm.title);
+    //     formData.append("type", materialForm.type);
+    //     formData.append("content", materialForm.file);
 
-        try {
-            await addMaterial(materialForm.courseId, formData);
-            alert("Material added successfully!");
-            setMaterialForm({ courseId: "", title: "", type: "document" });
-            setIsModalOpen(false); // Close modal on success
-            window.location.reload(); // Refresh to show updated materials
-        } catch (err) {
-            alert("Failed to add material.");
-        }
-    };
+    //     try {
+    //         await addMaterial(materialForm.courseId, formData);
+    //         alert("Material added successfully!");
+    //         setMaterialForm({ courseId: "", title: "", type: "pdf" });
+    //         setIsModalOpen(false);
+    //         window.location.reload();
+    //     } catch {
+    //         alert("Failed to add material.");
+    //     }
+    // };
 
-    const handleDeleteMaterial = async (courseId: string, materialId: string) => {
-        if (window.confirm("Are you sure you want to delete this material?")) {
-            try {
-                await deleteMaterial(courseId, materialId);
-                alert("Material deleted successfully!");
-                window.location.reload();
-            } catch (err) {
-                alert("Failed to delete material.");
-            }
-        }
-    };
+    // const handleDeleteMaterial = async (courseId: string, materialId: string) => {
+    //     if (window.confirm("Are you sure you want to delete this material?")) {
+    //         try {
+    //             await deleteMaterial(courseId, materialId);
+    //             alert("Material deleted successfully!");
+    //             window.location.reload();
+    //         } catch {
+    //             alert("Failed to delete material.");
+    //         }
+    //     }
+    // };
 
     return (
         <div className="store-page p-4">
             <PageMeta title="My Courses | Academix" description="Manage your courses and materials." />
             <h1 className="text-3xl mb-4 text-gray-800 dark:text-gray-100">My Courses</h1>
 
-            {/* Add Material Button (Visible to Instructors) */}
             {isInstructor && (
                 <button
                     onClick={() => setIsModalOpen(true)}
@@ -75,12 +72,11 @@ const MyCourses: React.FC = () => {
                 </button>
             )}
 
-            {/* Modal for Adding Material */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
                         <h2 className="text-xl mb-4 text-gray-800 dark:text-gray-100">Add New Material</h2>
-                        <form onSubmit={handleAddMaterial}>
+                        {/* <form onSubmit={handleAddMaterial}>
                             <select
                                 value={materialForm.courseId}
                                 onChange={(e) => setMaterialForm({ ...materialForm, courseId: e.target.value })}
@@ -105,7 +101,7 @@ const MyCourses: React.FC = () => {
                                 onChange={(e) => setMaterialForm({ ...materialForm, type: e.target.value })}
                                 className="mb-4 p-2 border rounded w-full dark:bg-gray-700 dark:text-white"
                             >
-                                <option value="document">Document</option>
+                                <option value="pdf">PDF</option>
                                 <option value="video">Video</option>
                                 <option value="quiz">Quiz</option>
                             </select>
@@ -131,12 +127,11 @@ const MyCourses: React.FC = () => {
                                 </button>
                             </div>
                             {addError && <p className="text-red-500 mt-2">{addError}</p>}
-                        </form>
+                        </form> */}
                     </div>
                 </div>
             )}
 
-            {/* Course List */}
             <div className="course-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {loading ? (
                     <p className="text-gray-800 dark:text-gray-100">Loading...</p>
@@ -145,8 +140,8 @@ const MyCourses: React.FC = () => {
                 ) : courses.length > 0 ? (
                     courses.map((course: Course, index: number) => (
                         <div key={index} className="border p-4 rounded-lg shadow-md dark:bg-gray-800">
-                            <DaynamicCard
-                                id={course._id?.$oid || course._id}
+                            <DynamicCard
+                                id={course._id}
                                 buttonText="View Course"
                                 price={course.price}
                                 imageUrl={course.thumbnail}
@@ -158,14 +153,13 @@ const MyCourses: React.FC = () => {
                                 isButtonDisabled={false}
                             />
 
-                            {/* Materials Section */}
                             {course.materials && course.materials.length > 0 && (
                                 <div className="mt-4">
                                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                         Course Materials
                                     </h3>
                                     <ul className="mt-2 space-y-2">
-                                        {course.materials.map((material: Material, idx: number) => (
+                                        {course.materials.map((material: CourseMaterial, idx: number) => (
                                             <li
                                                 key={idx}
                                                 className="p-2 border rounded-md dark:border-gray-600 flex justify-between items-center"
@@ -175,15 +169,15 @@ const MyCourses: React.FC = () => {
                                                         <div>
                                                             <p className="text-gray-800 dark:text-gray-100">{material.title}</p>
                                                             <video controls className="w-full rounded-md mt-2">
-                                                                <source src={material.content} type="video/mp4" />
+                                                                <source src={material.url} type="video/mp4" />
                                                                 Your browser does not support the video tag.
                                                             </video>
                                                         </div>
-                                                    ) : material.type === "document" ? (
+                                                    ) : material.type === "pdf" ? (
                                                         <div>
                                                             <p className="text-gray-800 dark:text-gray-100">{material.title}</p>
                                                             <a
-                                                                href={material.content}
+                                                                href={material.url}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="text-blue-600 dark:text-blue-400 hover:underline"
@@ -200,21 +194,19 @@ const MyCourses: React.FC = () => {
                                                         </button>
                                                     ) : null}
                                                 </div>
-                                                {isInstructor && (
+                                                {/* {isInstructor && (
                                                     <button
-                                                        onClick={() =>
-                                                            handleDeleteMaterial(course._id, material._id || `${idx}`)
-                                                        }
+                                                        onClick={() => handleDeleteMaterial(course._id, material._id)}
                                                         disabled={deleteLoading}
                                                         className="px-2 py-1 bg-red-600 text-white rounded-md disabled:bg-gray-400 hover:bg-red-700"
                                                     >
                                                         {deleteLoading ? "Deleting..." : "Delete"}
                                                     </button>
-                                                )}
+                                                )} */}
                                             </li>
                                         ))}
                                     </ul>
-                                    {deleteError && <p className="text-red-500 mt-2">{deleteError}</p>}
+                                    {/* {deleteError && <p className="text-red-500 mt-2">{deleteError}</p>} */}
                                 </div>
                             )}
                         </div>
