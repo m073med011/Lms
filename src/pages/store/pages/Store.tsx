@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCourses, useCreateCourse, useBuyCourse } from '../../../hooks/useCourses';
+import { useCourses, useCreateCourse } from '../../../hooks/useCourses';
 import CreateCourseModal from '../Components/CreateCourseModal';
 import SidebarFilters from '../Components/SidebarFilters';
 import DaynamicCard from '../../../components/ui/DynamicCard/DynamicCard';
@@ -18,9 +18,7 @@ const Store: React.FC = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
     const { courses, totalPages, loading, error } = useCourses(filters, page);
-    
     const { create, isLoading: isCreating, error: createError } = useCreateCourse();
-    const { buy, isLoading: isBuying } = useBuyCourse();
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -33,43 +31,32 @@ const Store: React.FC = () => {
         setPage(1);
     };
 
-    const handleBuyCourse = async (courseId: string) => {
-        try {
-            await buy(courseId);
-        } catch {
-            alert('Failed to buy course. Please try again.');
-        }
-    };
-
     return (
         <div className="store-page p-4">
             <PageMeta
-        title="Store | Academix"
-        description="This is React.js Form Elements  Dashboard page for Academix - React.js Tailwind CSS Admin Dashboard Template"
-      />
+                title="Store | Academix"
+                description="This is React.js Form Elements Dashboard page for Academix - React.js Tailwind CSS Admin Dashboard Template"
+            />
             <h1 className="text-3xl mb-4 text-gray-800 dark:text-gray-100">Course Store</h1>
 
             <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full">
-    <input 
-        type="text" 
-        placeholder="Search Courses" 
-        value={filters.search}
-        onChange={handleSearchChange}
-        className="px-4 py-2 border rounded-lg w-full sm:max-w-80 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-    />
+                <input 
+                    type="text" 
+                    placeholder="Search Courses" 
+                    value={filters.search}
+                    onChange={handleSearchChange}
+                    className="px-4 py-2 border rounded-lg w-full sm:max-w-80 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                />
+                <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 sm:gap-5">
+                    <Button onClick={() => setIsSidebarOpen(true)} className="w-full sm:w-auto">
+                        Filters
+                    </Button>
+                    <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
+                        Create Course
+                    </Button>
+                </div>
+            </div>
 
-    <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 sm:gap-5">
-        <Button onClick={() => setIsSidebarOpen(true)} className="w-full sm:w-auto">
-            Filters
-        </Button>
-        <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
-            Create Course
-        </Button>
-    </div>
-</div>
-
-
-            {/* Course List */}
             <div className="course-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {loading ? (
                     <p className="text-gray-800 dark:text-gray-100">Loading...</p>
@@ -79,15 +66,13 @@ const Store: React.FC = () => {
                     courses.map((course, index) => (
                         <DaynamicCard 
                             key={index}
-                            buttonText="Buy" 
                             price={course.price} 
                             imageUrl={course.thumbnail} 
                             rating={3} 
                             title={course.title} 
                             description={course.description} 
                             category={course.category}
-                            onButtonClick={() => handleBuyCourse(String(course._id))}
-                            isButtonDisabled={isBuying}
+                            link={`/course/${course._id}`} // Add link to course details
                         />
                     ))
                 ) : (
@@ -95,7 +80,6 @@ const Store: React.FC = () => {
                 )}
             </div>
 
-            {/* Pagination Controls */}
             <div className="pagination mt-4 flex justify-center space-x-4">
                 <button 
                     onClick={() => setPage(page - 1)} 
@@ -114,7 +98,6 @@ const Store: React.FC = () => {
                 </button>
             </div>
 
-            {/* Sidebar Popup for Filters */}
             {isSidebarOpen && (
                 <SidebarFilters
                     filters={filters}
@@ -123,7 +106,6 @@ const Store: React.FC = () => {
                 />
             )}
 
-            {/* Create Course Modal */}
             {isModalOpen && (
                 <CreateCourseModal 
                     onClose={() => setIsModalOpen(false)} 

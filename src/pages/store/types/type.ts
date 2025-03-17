@@ -60,11 +60,11 @@ export interface Course {
 // Define the Purchase interface
 export interface Purchase {
     _id: string;
-    student: string; // User ID
-    course: string; // Course ID
-    purchaseDate: string;
+    user: string; // Changed from `student` to match backend
+    course: string;
+    transactionId: string; // Add this to match backend
     amount: number;
-    paymentStatus: "pending" | "completed" | "failed"; // Payment status
+    status: "Pending" | "Paid" | "Failed"; // Changed from `paymentStatus` to match backend
     createdAt?: string;
     updatedAt?: string;
 }

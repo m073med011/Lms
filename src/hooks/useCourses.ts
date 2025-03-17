@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { fetchCourses, createCourse,buyCourse,getStudentCourses,getCourseById,addMaterial, updateMaterial, deleteMaterial } from '../service/coursesService';
+import { fetchCourses, createCourse,getStudentCourses,getCourseById  } from '../service/coursesService';
 import { Course, Filters } from '../pages/store/types/type';
+import axios from "axios";
+
 export const useAddMaterial = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -110,39 +112,41 @@ export const useCreateCourse = () => {
 
     return { create, isLoading, error };
 };
-export const useBuyCourse = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
 
-    // Retrieve user data from localStorage
+export const useStudentCourses = () => {
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const userId = user?.id;
-
-    const buy = async (courseId: string) => {
-        if (!userId) {
-            setError("User not authenticated. Please log in.");
-            alert("User not authenticated. Please log in.");
-            return;
-        }
-
-        setIsLoading(true);
-        setError(null); // Reset error before making a new request
-
-        try {
-            // Call the API function
-            const response = await buyCourse(courseId, userId);
-            alert(response.message); // Show success message
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred.";
-            setError(errorMessage);
-            alert(errorMessage); // Show the exact API error message
-        } finally {
-            setIsLoading(false);
-        }
+  
+    const fetchCourses = async () => {
+      if (!userId) {
+        setError('User not authenticated.');
+        setLoading(false);
+        return;
+      }
+  
+      setLoading(true);
+      try {
+        const data = await getStudentCourses(userId);
+        setCourses(data);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch courses.');
+      } finally {
+        setLoading(false);
+      }
     };
+  
+    useEffect(() => {
+      fetchCourses();
+    }, [userId]);
+  
+    return { courses, loading, error, refetch: fetchCourses };
+  };
 
-    return { buy, isLoading, error };
-};
+
 
 
 export const useGetCouseById = (courseId: string) => {
@@ -168,29 +172,96 @@ export const useGetCouseById = (courseId: string) => {
     return { course, loading, error };
 }
 
-
-
-export const useStudentCourses = () => {
-    const [courses, setCourses] = useState<Course[]>([]);
-    const [loading, setLoading] = useState(true);
+export const useBuyCourse = () => {
+    const API_URL = "http://localhost:5000/api/courses";
+    const STATUS_URL = "http://localhost:5000/api/payment/status";
+  
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [iframeUrl, setIframeUrl] = useState<string | null>(null);
+    const [paymentCompleted, setPaymentCompleted] = useState<boolean>(false);
+    const [purchaseId, setPurchaseId] = useState<string | null>(null);
+  
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const userId = user?.id;
-
+    const token = localStorage.getItem("token");
+  
+    const buy = async (courseId: string) => {
+      if (!userId || !token) {
+        setError("User not authenticated. Please log in.");
+        alert("User not authenticated. Please log in.");
+        return;
+      }
+  
+      setIsLoading(true);
+      setError(null);
+  
+      try {
+        const response = await axios.post(
+          `${API_URL}/${courseId}/buy/${userId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        if (response.data.success && response.data.paymentURL) {
+          setIframeUrl(response.data.paymentURL);
+          setPurchaseId(response.data.purchaseId); // Store purchaseId
+          setPaymentCompleted(false);
+        } else {
+          throw new Error(response.data.message || "Failed to get payment URL.");
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred.";
+        setError(errorMessage);
+        alert(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    // Poll for payment status
     useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const data = await getStudentCourses(userId);
-                setCourses(data);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Failed to fetch courses.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCourses();
-    }, []);
-
-    return { courses, loading, error };
-};
+      if (!iframeUrl || !purchaseId || paymentCompleted) return;
+  
+      const pollInterval = setInterval(async () => {
+        try {
+          const response = await axios.get(`${STATUS_URL}/${purchaseId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          if (response.data.status === "Paid") {
+            markPaymentCompleted();
+            clearInterval(pollInterval);
+          } else if (response.data.status === "Failed") {
+            setError("Payment failed. Please try again.");
+            setIframeUrl(null);
+            clearInterval(pollInterval);
+          }
+        } catch (err) {
+          console.error("Error polling payment status:", err);
+        }
+      }, 3000); // Poll every 3 seconds
+  
+      return () => clearInterval(pollInterval);
+    }, [iframeUrl, purchaseId, paymentCompleted, token]);
+  
+    const resetIframe = () => {
+      setIframeUrl(null);
+      setPurchaseId(null);
+      setPaymentCompleted(false);
+    };
+  
+    const markPaymentCompleted = () => {
+      setPaymentCompleted(true);
+      setIframeUrl(null);
+      setPurchaseId(null);
+    };
+  
+    return { buy, isLoading, error, iframeUrl, resetIframe, paymentCompleted, markPaymentCompleted };
+  };
