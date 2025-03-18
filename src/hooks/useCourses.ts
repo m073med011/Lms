@@ -173,8 +173,8 @@ export const useGetCouseById = (courseId: string) => {
 }
 
 export const useBuyCourse = () => {
-    const API_URL = "http://localhost:5000/api/courses";
-    const STATUS_URL = "http://localhost:5000/api/payment/status";
+    const API_URL = "https://lms-rust-pi.vercel.app/api/courses";
+    const STATUS_URL = "https://lms-rust-pi.vercel.app/api/payment/status";
   
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
