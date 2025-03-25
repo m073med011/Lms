@@ -3,6 +3,8 @@ import { fetchCourses, createCourse,getStudentCourses,getCourseById  } from '../
 import { Course, Filters } from '../pages/store/types/type';
 import axios from "axios";
 
+
+
 // export const useAddMaterial = () => {
 //     const [isLoading, setIsLoading] = useState<boolean>(false);
 //     const [error, setError] = useState<string | null>(null);
@@ -103,51 +105,60 @@ export const useCreateCourse = () => {
         try {
             await createCourse(courseData);
         } catch {
-            setError('Failed to create course');
-        } finally {
-            setIsLoading(false);
-            window.location.reload();
-        }
+            setError('Failed to create course');}
+        // } finally {
+        //     setIsLoading(false);
+        //     window.location.reload();
+        // }
     };
 
     return { create, isLoading, error };
 };
 
 export const useStudentCourses = () => {
-    const [courses, setCourses] = useState<Course[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const userId = user?.id;
-  
-    const fetchCourses = async () => {
-      if (!userId) {
-        setError('User not authenticated.');
-        setLoading(false);
-        return;
-      }
-  
-      setLoading(true);
-      try {
-        const data = await getStudentCourses(userId);
-        setCourses(data);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch courses.');
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    useEffect(() => {
-      fetchCourses();
-    }, [userId]);
-  
-    return { courses, loading, error, refetch: fetchCourses };
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  let userId: string | null = null;
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    try {
+      const base64Payload = token.split(".")[1];
+      const decodedPayload = JSON.parse(atob(base64Payload));
+      userId = decodedPayload?.id;
+    } catch (err) {
+      console.error("Invalid token format:", err);
+    }
+  }
+
+  const fetchCourses = async () => {
+    if (!userId) {
+      setError("User not authenticated.");
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await getStudentCourses(userId);
+      setCourses(data);
+      console.log(data);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch courses.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    fetchCourses();
+  }, [token]); // نستخدم التوكن هنا بدل userId عشان يتغير لما يتغير التوكن
 
-
+  return { courses, loading, error, refetch: fetchCourses };
+};
 
 export const useGetCouseById = (courseId: string) => {
     const [course, setCourse] = useState<Course | null>(null);
@@ -173,8 +184,9 @@ export const useGetCouseById = (courseId: string) => {
 }
 
 export const useBuyCourse = () => {
-    const API_URL = "https://lms-rust-pi.vercel.app/api/courses";
-    const STATUS_URL = "https://lms-rust-pi.vercel.app/api/payment/status";
+    const API_URL = `${import.meta.env.VITE_API_ENDPOINT}/courses`;
+
+    const STATUS_URL = `${import.meta.env.VITE_API_ENDPOINT}/payment/status`;
   
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);

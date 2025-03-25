@@ -44,15 +44,25 @@ const CreateCourseModal: React.FC<CreateCourseModalProps> = ({ onClose, onCreate
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
+        console.log(formData);
         e.preventDefault();
         if (!thumbnail) {
             setErrorMessage('Please upload a thumbnail for the course.');
             return;
         }
 
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const userId = user.id;
-        if (!userId) {
+        const token = localStorage.getItem('token');
+        let userId = '';
+
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                userId = payload.id;
+            } catch {
+                setErrorMessage('Invalid token. Please log in again.');
+                return;
+            }
+        } else {
             setErrorMessage('User not authenticated. Please log in.');
             return;
         }
@@ -65,7 +75,7 @@ const CreateCourseModal: React.FC<CreateCourseModalProps> = ({ onClose, onCreate
         data.append('price', formData.price?.toString() || '0');
         data.append('duration', formData.duration?.toString() || '0');
         data.append('isPublished', formData.isPublished?.toString() || 'false');
-        data.append('instructor', userId);
+        data.append('id', userId);
         data.append('thumbnail', thumbnail);
 
         await onCreate(data);
